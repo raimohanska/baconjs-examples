@@ -1,10 +1,15 @@
 (ns baconjs.web
-  (:use [ring.adapter.jetty :only [run-jetty]]))
+  (:use compojure.core
+        [hiccup.middleware :only (wrap-base-url)])
+  (:require [compojure.route :as route]
+            [compojure.handler :as handler]
+            [compojure.response :as response]))
 
-(defn app [req]
-  {:status 200
-   :headers {"Content-Type" "text/plain"}
-   :body "Hello, world"})
+(defroutes main-routes
+  (GET "/" [] "LOL")
+  (route/resources "/")
+  (route/not-found "Page not found"))
 
-(defn -main [port]
-  (run-jetty app {:port (Integer. port)}))
+(def app
+  (-> (handler/site main-routes)
+      (wrap-base-url)))
