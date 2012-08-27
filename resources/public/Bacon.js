@@ -431,6 +431,17 @@
       });
     };
 
+    Observable.prototype.mapError = function(f) {
+      f = toExtractor(f);
+      return this.withHandler(function(event) {
+        if (event.isError()) {
+          return this.push(next(f(event.error)));
+        } else {
+          return this.push(event);
+        }
+      });
+    };
+
     Observable.prototype["do"] = function(f) {
       return this.withHandler(function(event) {
         if (event.hasValue()) f(event.value);
@@ -499,6 +510,10 @@
     };
 
     Observable.prototype.distinctUntilChanged = function() {
+      return this.skipDuplicates();
+    };
+
+    Observable.prototype.skipDuplicates = function() {
       return this.withStateMachine(void 0, function(prev, event) {
         if (!event.hasValue()) {
           return [prev, [event]];

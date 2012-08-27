@@ -1,9 +1,55 @@
 <html>
   <head>
+    <link rel="stylesheet" type="text/css" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
+    <style type="text/css">
+      label { padding : 0; margin-right : 15px;}
+      .ajaxIndicator {
+        background: url('loading.gif');
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+      }
+    </style>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="Bacon.js"></script>
+    <script type="text/javascript">
+      $(function() {
+        // Stream of search strings (queries)
+        var searches = $("#query").asEventStream("keyup").map(function(event) {
+            return $(event.srcElement).val()
+            }).skipDuplicates()
+
+        // Stream of search result strings, with errors mapped to "Search fail"
+        var results = searches.throttle(500).switch(function(query) {
+            return Bacon.fromPromise($.ajax("/search/" + query))
+          }).mapError("Search fail")
+
+        // Show results
+        results.onValue(function(result) {
+            $("#resultText").html(result)
+          })
+
+        // Search status, where "true" indicates an ongoing search
+        var ongoingSearch = searches.map(true).merge(results.map(false)).skipDuplicates().toProperty(false)
+
+        // Replace results with placeholder when a search is going on
+        ongoingSearch.onValue(function(show) {
+           $(".ajaxIndicator").toggle(show)
+           $("#resultText").toggle(!show)
+          })
+      })
+    </script>
   </head>
   <body>
     <h1>bacon.js AJAX example</h1>
-    <label for="search">Search: </label>
-    <input id="search" type="text">
+    <div id="search">
+      <label for="query">Search</label>
+      <input id="query" type="text">
+    </div>
+    <div id="result">
+      <label for="resultText">Results</label>
+      <span id="resultText"></span>
+      <span class="ajaxIndicator"></span>
+    </div>
   </body>
 </html>
