@@ -1,1 +1,1 @@
-web: lein trampoline run -m baconjs.web $PORT
+web: lein trampoline run -m baconjs.web
