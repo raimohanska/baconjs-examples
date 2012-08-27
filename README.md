@@ -6,9 +6,10 @@ Bacon.js AJAX example, consisting of a Clojure/Compojure fake search server and 
 The idea is to demonstrate how Functional Reactive Programming and Bacon.js can make your AJAX apps more elegant and reliable. 
 The example code is 100% free of mutable state. All that is handled under the hood by the framework. I'll try to explain the details later, maybe here.
 
-Live version running on Heroku:
+Please check out
 
-http://baconjs-examples.herokuapp.com
+- [Live version](http://baconjs-examples.herokuapp.com) running on Heroku
+- [Source code](https://github.com/raimohanska/baconjs-examples/blob/master/resources/public/index.html) for the page, with some comments
 
 To run this on your machine you need something like
 
